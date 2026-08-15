@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>LSPD Community Police Academy Application</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    background: #e5e5e5;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 10px;
+    margin: 0;
+  }
+  .instructions {
+    width: 730px;
+    background: #fff8dc;
+    border: 1px solid #d4b106;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 12.5px;
+    margin-bottom: 14px;
+  }
+  #capture-wrapper {
+    background: #ffffff;
+  }
+  .form-sheet {
+    width: 730px;
+    background: #ffffff;
+    border-top: 4px solid #000;
+  }
+  .header {
+    background: #7a7a7a;
+    color: #fff;
+    text-align: center;
+    padding: 8px 0 10px;
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 1.5;
+    border-bottom: 1px solid #555;
+  }
+  .section-title {
+    background: #d9d9d9;
+    text-align: center;
+    font-weight: bold;
+    font-size: 12.5px;
+    padding: 4px 0;
+    border-bottom: 1px solid #999;
+    border-top: 1px solid #999;
+  }
+  .row {
+    display: flex;
+    border-bottom: 1px solid #999;
+  }
+  .cell {
+    padding: 5px 8px;
+    font-size: 12px;
+    border-right: 1px solid #999;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cell:last-child { border-right: none; }
+  .cell .label { white-space: nowrap; }
+  .fill {
+    flex: 1;
+    min-height: 16px;
+    border-bottom: 1px solid #999;
+    outline: none;
+    padding: 0 4px;
+  }
+  .fill:focus { background: #fff8dc; }
+  .fill:empty:before { content: attr(data-ph); color: #aaa; }
+
+  .bg-narrative { padding: 8px; font-size: 12px; }
+  .bg-narrative p { margin: 4px 0 10px; }
+  .question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+    padding-right: 10px;
+  }
+  .yn {
+    padding: 1px 6px;
+    cursor: pointer;
+    border-radius: 40%;
+    border: 1px solid transparent;
+  }
+  .yn.circled {
+    border: 2px solid #b5651d;
+    border-radius: 50%;
+    font-weight: bold;
+  }
+  .blank {
+    border-bottom: 1px solid #000;
+    width: 90px;
+    display: inline-block;
+    margin-left: 6px;
+    outline: none;
+    min-height: 14px;
+  }
+  .blank:focus { background: #fff8dc; }
+
+  .explain-line {
+    border-bottom: 1px solid #999;
+    height: 18px;
+    margin: 6px 8px;
+    outline: none;
+  }
+  .explain-line:focus { background: #fff8dc; }
+
+  .certify {
+    padding: 10px 8px;
+    font-weight: bold;
+    font-size: 12.5px;
+    border-top: 1px solid #999;
+    border-bottom: 1px solid #999;
+  }
+  .sig-row {
+    display: flex;
+    align-items: flex-end;
+    padding: 14px 8px;
+    font-weight: bold;
+    font-size: 13px;
+    border-bottom: 1px solid #999;
+    gap: 6px;
+  }
+  .sig-line {
+    border-bottom: 1px solid #000;
+    flex: 1;
+    margin: 0 10px;
+    min-height: 14px;
+    outline: none;
+  }
+  .sig-line:focus { background: #fff8dc; }
+  .date-line {
+    border-bottom: 1px solid #000;
+    width: 150px;
+    display: inline-block;
+    margin-left: 6px;
+    outline: none;
+    min-height: 14px;
+  }
+  .date-line:focus { background: #fff8dc; }
+
+  /* --- Distinct staff-only section --- */
+  .staff-only {
+    background: #fdf1e0;
+    border: 2px dashed #b5651d;
+    margin-top: 0;
+  }
+  .staff-only .warning-bar {
+    background: #b5651d;
+    color: #fff;
+    text-align: center;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 12px;
+    padding: 5px 0;
+    text-decoration: underline;
+  }
+  .staff-only-body { padding: 10px 10px 16px; font-size: 12px; }
+  .staff-only-body .line {
+    border-bottom: 1px solid #333;
+    display: inline-block;
+    margin-left: 6px;
+    outline: none;
+    min-height: 14px;
+  }
+  .staff-only-body .line:focus { background: #fff; }
+  .approved-row { margin-top: 10px; font-weight: bold; font-size: 13px; }
+
+  #export-btn {
+    margin-top: 22px;
+    padding: 10px 22px;
+    background: #1b5e20;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  #export-btn:hover { background: #164719; }
+</style>
+</head>
+<body>
+
+<div class="instructions">
+  Klik di bagian bergaris (yang ada tulisan abu-abu) untuk mengisi teks. Klik salah satu kata <b>YES</b> / <b>NO</b> untuk melingkarinya. Setelah selesai, tekan tombol <b>Export to PNG</b> di bawah.
+</div>
+
+<div id="capture-wrapper">
+  <div class="form-sheet" id="form-sheet">
+
+    <div class="header">
+      LOS SANTOS POLICE DEPARTMENT<br>
+      COMMUNITY POLICE ACADEMY APPLICATION
+    </div>
+
+    <div class="section-title">APPLICATION / APLICACIÓN</div>
+
+    <div class="row"><div class="cell full"><span class="label">Name / Nombre:</span><span class="fill" contenteditable="true" data-ph="tulis nama"></span></div></div>
+    <div class="row">
+      <div class="cell"><span class="label">Date of birth:</span><span class="fill" contenteditable="true" data-ph="tgl lahir"></span></div>
+      <div class="cell"><span class="label">Age:</span><span class="fill" contenteditable="true" data-ph="umur"></span></div>
+      <div class="cell"><span class="label">Phone:</span><span class="fill" contenteditable="true" data-ph="no. telp"></span></div>
+    </div>
+    <div class="row"><div class="cell full"><span class="label">Current address:</span><span class="fill" contenteditable="true" data-ph="alamat"></span></div></div>
+    <div class="row">
+      <div class="cell"><span class="label">City:</span><span class="fill" contenteditable="true" data-ph="kota"></span></div>
+      <div class="cell"><span class="label">State:</span><span class="fill" contenteditable="true" data-ph="negara bagian"></span></div>
+      <div class="cell"><span class="label">ZIP Code:</span><span class="fill" contenteditable="true" data-ph="kode pos"></span></div>
+    </div>
+    <div class="row">
+      <div class="cell"><span class="label">Occupation:</span><span class="fill" contenteditable="true" data-ph="pekerjaan"></span></div>
+      <div class="cell" style="flex:2;"><span class="label">Drivers License or ID No:</span><span class="fill" contenteditable="true" data-ph="no. SIM/ID"></span></div>
+    </div>
+
+    <div class="section-title">EMERGENCY CONTACT INFORMATION / CONTACTO DE EMERJENCIA</div>
+
+    <div class="row"><div class="cell full"><span class="label">Name of person to be contacted:</span><span class="fill" contenteditable="true" data-ph="nama kontak darurat"></span></div></div>
+    <div class="row">
+      <div class="cell"><span class="label">Address:</span><span class="fill" contenteditable="true" data-ph="alamat"></span></div>
+      <div class="cell"><span class="label">Phone:</span><span class="fill" contenteditable="true" data-ph="no. telp"></span></div>
+    </div>
+    <div class="row">
+      <div class="cell"><span class="label">City:</span><span class="fill" contenteditable="true" data-ph="kota"></span></div>
+      <div class="cell"><span class="label">State:</span><span class="fill" contenteditable="true" data-ph="negara bagian"></span></div>
+      <div class="cell"><span class="label">ZIP Code:</span><span class="fill" contenteditable="true" data-ph="kode pos"></span></div>
+    </div>
+    <div class="row"><div class="cell full"><span class="label">Relationship:</span><span class="fill" contenteditable="true" data-ph="hubungan"></span></div></div>
+
+    <div class="section-title">BACKGROUND INFORMATION / INVESTIGACIÓN DE SU HISTORIA PERSONAL</div>
+
+    <div class="bg-narrative">
+      <p>Please answer the following questions by circling "YES" OR "NO" and <u>write your initials after each response.</u></p>
+
+      <div class="question">
+        <span>Have you ever been convicted of a felony?</span>
+        <span><span class="yn" data-q="1">YES</span> / <span class="yn" data-q="1">NO</span><span class="blank" contenteditable="true"></span></span>
+      </div>
+      <div class="question">
+        <span>Do you have any outstanding warrants (s)?</span>
+        <span><span class="yn" data-q="2">YES</span> / <span class="yn" data-q="2">NO</span><span class="blank" contenteditable="true"></span></span>
+      </div>
+      <div class="question">
+        <span>Are there any pending criminal cases(s) against you?</span>
+        <span><span class="yn" data-q="3">YES</span> / <span class="yn" data-q="3">NO</span><span class="blank" contenteditable="true"></span></span>
+      </div>
+
+      <div>If yes, explain: </div>
+      <div class="explain-line" contenteditable="true"></div>
+      <div class="explain-line" contenteditable="true"></div>
+    </div>
+
+    <div class="certify">
+      I certify that my answers are true and complete to the best of my knowledge. I understand that false or misleading
+      information in my application may result in my release.
+    </div>
+
+    <div class="sig-row">
+      <span>Signature :</span>
+      <span class="sig-line" contenteditable="true"></span>
+      <span>Date:<span class="date-line" contenteditable="true"></span></span>
+    </div>
+
+  </div>
+
+</div>
+
+<button id="export-btn">Export to PNG</button>
+
+<script>
+  // Toggle circling for YES/NO style choices
+  document.querySelectorAll('.yn').forEach(function (el) {
+    el.addEventListener('click', function () {
+      var q = el.getAttribute('data-q');
+      document.querySelectorAll('.yn[data-q="' + q + '"]').forEach(function (sib) {
+        sib.classList.remove('circled');
+      });
+      el.classList.add('circled');
+    });
+  });
+
+  // Clean up empty contenteditable so placeholder shows again
+  document.querySelectorAll('[contenteditable]').forEach(function (el) {
+    el.addEventListener('blur', function () {
+      if (el.textContent.trim() === '') el.innerHTML = '';
+    });
+  });
+
+  document.getElementById('export-btn').addEventListener('click', function () {
+    var target = document.getElementById('capture-wrapper');
+    html2canvas(target, { backgroundColor: '#ffffff', scale: 2 }).then(function (canvas) {
+      var link = document.createElement('a');
+      link.download = 'lspd_academy_application.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  });
+</script>
+
+</body>
+</html>
